@@ -2,56 +2,14 @@ import { FC } from 'react';
 
 const Home: FC = () => {
   return (
-    <div>
-      <input
-        id="close-menu"
-        className="close-menu"
-        type="checkbox"
-        aria-Label="Close menu"
-        role="button"
-      />
-      <label
-        className="close-menu-label"
-        htmlFor="close-menu"
-        title="close menu"></label>
-      <aside className="menu white-bg">
-        <div className="main-content menu-content">
-          <h1>
-            {/* <a
-              onClick="getElementById('close-menu').checked = false;"
-              href="#home">
-              recycrew
-            </a> */}
-          </h1>
-          <nav>
-            {/* <ul onclick="getElementById('close-menu').checked = false;"> */}
-            <li>
-              <a href="#quem-somos">quem somos</a>
-            </li>
-            <li>
-              <a href="#como-funciona">como funciona</a>
-            </li>
-            <li>
-              <a href="#galeria">galeria</a>
-            </li>
-            <li>
-              <a href="#precos">preços</a>
-            </li>
-            <li>
-              <a href="#contact">contato</a>
-            </li>
-            {/* </ul> */}
-          </nav>
-        </div>
-      </aside>
-
-      <div className="menu-spacing"></div>
-
+    <div className="text-justify leading-loose">
       <section id="home" className="main-bg section">
         <div className="main-content intro-container">
-          <h2>Buscamos os seus recicláveis em várias cidades!</h2>
+          <h2 className="mb-10 text-4xl">
+            Buscamos os seus recicláveis em várias cidades!
+          </h2>
           <div className="intro-content">
-            <p className="intro-text">
+            <p className="intro-text text-lg">
               A <b>recycrew</b> é uma plataforma de contratação de coletores
               especializados em mais de 25 tipos de materiais recicláveis! Nós
               conectamos doadores de materiais que seriam descartados a
@@ -72,9 +30,9 @@ const Home: FC = () => {
         </div>
       </section>
 
-      <section id="quem-somos" className="white-bg section">
+      <section id="quem-somos" className="white-bg">
         <div className="main-content">
-          <h2>quem somos</h2>
+          <h2 className="mb-10 text-4xl">quem somos</h2>
           <p>Somos a futura maior empresa de reciclagem do Brasil.</p>
           <p>
             <b>A recycrew</b> é uma empresa brasileira, prestadora de serviços
@@ -117,7 +75,7 @@ const Home: FC = () => {
 
       <section id="como-funciona" className="como-funciona main-bg section">
         <div className="main-content como-funciona-content">
-          <h2 className="grid-main-heading">como funciona</h2>
+          <h2 className="grid-main-heading mb-10 text-4xl">como funciona</h2>
           <p className="grid-description">Entenda como trabalhamos!</p>
           <div className="grid">
             <article>
@@ -159,7 +117,7 @@ const Home: FC = () => {
 
       <section id="galeria" className="white-bg section">
         <div className="main-content">
-          <h2 className="grid-main-heading">galeria</h2>
+          <h2 className="grid-main-heading mb-10 text-4xl">galeria</h2>
           <p className="grid-description">Materiais que coletamos:</p>
           <div className="grid">
             <div className="galeria-img">
@@ -170,14 +128,14 @@ const Home: FC = () => {
             </div>
             <div className="galeria-img">
               <img
-                src="https://images.pexels.com/photos/159751/book-address-book-learning-learn-159751.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-                alt="um túnel de livros velhos"
+                src="https://images.pexels.com/photos/1068992/pexels-photo-1068992.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                alt="garrafa de vidro"
               />
             </div>
             <div className="galeria-img">
               <img
-                src="https://images.pexels.com/photos/1068992/pexels-photo-1068992.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-                alt="garrafa de vidro"
+                src="https://images.pexels.com/photos/159751/book-address-book-learning-learn-159751.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                alt="um túnel de livros velhos"
               />
             </div>
             <div className="galeria-img">
@@ -204,7 +162,7 @@ const Home: FC = () => {
 
       <section id="precos" className="white-bg section">
         <div className="main-content">
-          <h2>preços</h2>
+          <h2 className="mb-10 text-4xl">preços</h2>
           <p>
             Essa é a melhor parte! Você promove o desenvolvimento econômico da
             sua cidade, ajuda na diminuição do gasto de energia com a exploração
@@ -253,8 +211,8 @@ const Home: FC = () => {
       <section id="contact" className="main-bg section">
         <div className="main-content intro-content">
           <div className="contact-form">
+            <h1 className="text-4xl">Fale conosco:</h1>
             <fieldset className="form-grid">
-              <h1>Fale conosco:</h1>
               <div className="form-group">
                 <label htmlFor="first-name"></label>
                 <input
@@ -290,8 +248,6 @@ const Home: FC = () => {
                 <textarea
                   name="message"
                   id="message"
-                  // cols="30"
-                  // rows="10"
                   placeholder="digite aqui, sua mensagem"></textarea>
               </div>
 
