@@ -8,7 +8,7 @@ const App: FC = () => {
 
   return (
     <div>
-      {location === '/' || (location === '/coletas' && <Header />)}
+      {(location === '/' || location === '/coletas') && <Header />}
       <div className="mx-auto sm:px-6 lg:px-8">
         <AppRoutes />
       </div>
