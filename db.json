@@ -1,0 +1,37 @@
+{
+  "contas": [
+    {
+      "login": "larissa.martins@email.com",
+      "password": "nirvana123",
+      "name": "Larissa Martins",
+      "id": 1
+    },
+    {
+      "login": "samuel.oliveira@email.com",
+      "password": "nirvana123",
+      "name": "Samuel",
+      "id": 2
+    },
+    {
+      "login": "luiz@email.com",
+      "password": "nirvana123",
+      "name": "Luiz",
+      "id": 3
+    },
+    {
+      "login": "ruy@email.com",
+      "password": "123",
+      "name": "Ruy Barbosa",
+      "id": 4
+    }
+  ],
+  "coletas": [
+    {
+      "description": "Na minha casa, eu tenho uma quantidade enorme de reciclagem, e a maior é parte vidro.",
+      "type": "vidro",
+      "responsible": "Ruy Barbosa",
+      "colector": "Samuel",
+      "id": 1
+    }
+  ]
+}

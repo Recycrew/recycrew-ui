@@ -21,6 +21,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:db": "json-server --watch -p 4000 db.json",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -54,6 +55,7 @@
     "eslint-config-prettier": "8.4.0",
     "eslint-plugin-prettier": "4.0.0",
     "eslint-plugin-react": "7.28.0",
+    "json-server": "^0.17.0",
     "postcss": "8.4.7",
     "prettier": "^2.5.1",
     "prettier-plugin-tailwindcss": "^0.1.8",
