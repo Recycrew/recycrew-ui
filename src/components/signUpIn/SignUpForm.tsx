@@ -1,11 +1,29 @@
 import { FC, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input } from '..';
+import { useUserContext } from '../../context/UserContext';
 
 const SignUpForm: FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const { setUserName } = useUserContext();
+
+  const navigate = useNavigate();
+
+  const handleRegister = async () => {
+    const response = await fetch('http://localhost:4000/contas', {
+      method: 'POST',
+      body: JSON.stringify({ login: email, password: password, name }),
+      headers: new Headers({ 'content-type': 'application/json' })
+    });
+
+    const user = await response.json();
+
+    setUserName(user.name);
+    navigate('/coletas');
+  };
 
   return (
     <div className="flex-1 flex-col justify-center py-16 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -32,7 +50,10 @@ const SignUpForm: FC = () => {
             onChange={setPassword}
           />
           <div className="flex flex-col gap-4">
-            <Button title="Cadastrar" type="primary"></Button>
+            <Button
+              title="Cadastrar"
+              type="primary"
+              onClick={handleRegister}></Button>
           </div>
         </div>
       </div>

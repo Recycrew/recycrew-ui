@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 interface Props {
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: (e?: any) => void;
   title: string;
   type: 'outlined' | 'primary' | 'secondary' | 'white';
 }
@@ -31,6 +31,7 @@ const Button: FC<Props> = ({ children, disabled, onClick, title, type }) => {
   return (
     <button
       disabled={disabled}
+      type="button"
       onClick={onClick}
       className={`
         text-md flex h-10 w-full items-center justify-center rounded-md bg-opacity-80 px-4 py-2
