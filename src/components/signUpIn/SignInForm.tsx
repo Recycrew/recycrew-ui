@@ -3,6 +3,7 @@ import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input } from '..';
 import { useUserContext } from '../../context/UserContext';
+import { apiService } from '../../service/api';
 
 const SignInForm: FC = () => {
   const [email, setEmail] = useState('');
@@ -12,8 +13,7 @@ const SignInForm: FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/contas?login=${email}&password=${password}`);
-      const [user] = await response.json();
+      const [user] = await apiService.get(`/contas?login=${email}&password=${password}`)
 
       setUserName(user.name);
       localStorage.setItem('name', user.name)

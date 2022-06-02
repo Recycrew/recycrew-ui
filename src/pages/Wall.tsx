@@ -1,7 +1,10 @@
+/* eslint-disable prettier/prettier */
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PostForm } from '../components';
 import { useUserContext } from '../context/UserContext';
+import { apiService } from '../service/api';
 export interface ICollects {
   id: number;
   description: string;
@@ -19,16 +22,7 @@ const Wall = () => {
   const handleClick = async (collect: ICollects) => {
     if (collect.responsible === userName) return;
 
-    const response = await fetch(
-      `http://localhost:4000/coletas/${collect.id}`,
-      {
-        method: 'PUT',
-        body: JSON.stringify({ ...collect, colector: userName }),
-        headers: new Headers({ 'content-type': 'application/json' })
-      }
-    );
-
-    const updatedCollect = await response.json();
+    const updatedCollect = await apiService.put(`/coletas/${collect.id}`, { ...collect, colector: userName });
 
     setCollects((previousCollection) =>
       previousCollection.map((currentCollect) =>
@@ -37,11 +31,20 @@ const Wall = () => {
     );
   };
 
+  const handleExitCollectOrder = async (collect: ICollects) => {
+    await apiService.delete(`/coletas/${collect.id}`);
+
+    setCollects((previousCollection) =>
+      previousCollection.filter((currentCollect) =>
+        currentCollect.id !== collect.id
+      )
+    );
+  }
+
   useEffect(() => {
     (async () => {
-      const response = await fetch('http://localhost:4000/coletas');
-      const coletas = await response.json();
-
+      const coletas = await apiService.get('/coletas');
+      console.log(coletas);
       setCollects(coletas);
     })();
   }, []);
@@ -62,9 +65,10 @@ const Wall = () => {
           onClick={() => handleClick(collect)}
           style={
             collect.colector
-              ? { backgroundColor: '#73ba91', color: 'white' }
-              : {}
+              ? { backgroundColor: '#73ba91', color: 'white', position: 'relative'}
+              : {position: 'relative'}
           }>
+          {collect.responsible === userName && <span style={{ position: 'absolute', top: 5, right: 10, color: collect.colector ? 'white': 'black', cursor: 'pointer'}} onClick={() => handleExitCollectOrder(collect)}>X</span>}
           <div className="flex items-start space-x-4">
             <div className="min-w-0 flex-1">
               <div>Descrição: {collect.description}</div>
