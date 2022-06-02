@@ -1,7 +1,10 @@
+/* eslint-disable prettier/prettier */
+
 import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input } from '..';
 import { useUserContext } from '../../context/UserContext';
+import { apiService } from '../../service/api';
 
 const SignUpForm: FC = () => {
   const [name, setName] = useState('');
@@ -13,13 +16,7 @@ const SignUpForm: FC = () => {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    const response = await fetch('http://localhost:4000/contas', {
-      method: 'POST',
-      body: JSON.stringify({ login: email, password: password, name }),
-      headers: new Headers({ 'content-type': 'application/json' })
-    });
-
-    const user = await response.json();
+    const user = await apiService.post('/contas', { login: email, password, name });
 
     setUserName(user.name);
     navigate('/coletas');

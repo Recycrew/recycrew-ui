@@ -1,7 +1,10 @@
+/* eslint-disable prettier/prettier */
+
 import { useEffect, useReducer } from 'react';
 import { Button } from '..';
 import { useUserContext } from '../../context/UserContext';
 import { ICollects } from '../../pages/Wall';
+import { apiService } from '../../service/api';
 
 interface IAction {
   payload: string;
@@ -54,13 +57,7 @@ const PostForm = ({ setCollection }: IPostForm) => {
       colector: ''
     };
 
-    const response = await fetch('http://localhost:4000/coletas', {
-      method: 'POST',
-      body: JSON.stringify(newCollect),
-      headers: new Headers({ 'content-type': 'application/json' })
-    });
-
-    const collect = await response.json();
+    const collect = await apiService.post('/coletas', newCollect);
 
     setCollection((prevCollection) => [
       ...prevCollection,
