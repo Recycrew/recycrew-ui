@@ -88,8 +88,8 @@ const PostForm = ({ onCreateDonation }: IPostForm) => {
                   <option value="0">Selecione uma opção</option>
                   <option value="vidro">Vidro</option>
                   <option value="plastico">Plástico</option>
-                  <option value="ferro">Ferro</option>
-                  <option value="eletronico">Eletronico</option>
+                  <option value="metal">Metal</option>
+                  <option value="papel">Papel</option>
                 </select>
               </div>
             </div>
