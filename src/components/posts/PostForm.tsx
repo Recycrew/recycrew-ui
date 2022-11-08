@@ -1,10 +1,7 @@
 /* eslint-disable prettier/prettier */
 
-import { useEffect, useReducer } from 'react';
+import { useReducer } from 'react';
 import { Button } from '..';
-import { useUserContext } from '../../context/UserContext';
-import { ICollects } from '../../pages/Wall';
-import { apiService } from '../../service/api';
 
 interface IAction {
   payload: string;
@@ -13,25 +10,26 @@ interface IAction {
 
 const initialState = {
   description: '',
-  type: ''
+  material: ''
 };
 
+type State = { description: string; material: string };
+
 interface IPostForm {
-  setCollection: React.Dispatch<React.SetStateAction<ICollects[]>>;
+  onCreateDonation: (material: string, description: string) => void;
 }
 
-const formReducer = (state: any, action: IAction) => {
-  const form: any = {
+const formReducer = (state: State, action: IAction) => {
+  const form: Record<any, () => State> = {
     description: () => ({ ...state, description: action.payload }),
-    type: () => ({ ...state, type: action.payload })
+    material: () => ({ ...state, material: action.payload })
   };
 
   return form[action.name]() || state;
 };
 
-const PostForm = ({ setCollection }: IPostForm) => {
+const PostForm = ({ onCreateDonation }: IPostForm) => {
   const [formState, dispatch] = useReducer(formReducer, initialState);
-  const { userName } = useUserContext();
 
   const handleChange = (
     event:
@@ -44,27 +42,11 @@ const PostForm = ({ setCollection }: IPostForm) => {
     dispatch({ name, payload: value });
   };
 
-  useEffect(() => console.log(formState), [formState]);
-
   const handlePost = async (event: any) => {
     event.preventDefault();
-    if (!formState.description || !formState.type) return;
-    if (formState.description.length <= 5) return;
+    if (!formState.description || !formState.material) return;
 
-    const newCollect = {
-      ...formState,
-      responsible: userName,
-      colector: ''
-    };
-
-    const collect = await apiService.post('/coletas', newCollect);
-
-    setCollection((prevCollection) => [
-      ...prevCollection,
-      {
-        ...collect
-      }
-    ]);
+    onCreateDonation(formState.material, formState.description);
   };
 
   return (
@@ -85,7 +67,7 @@ const PostForm = ({ setCollection }: IPostForm) => {
             <div className="mt-8 flex justify-center">
               <div className="mb-3 xl:w-96">
                 <select
-                  name="type"
+                  name="material"
                   className="form-select block
                             w-full
                             appearance-none
@@ -102,7 +84,7 @@ const PostForm = ({ setCollection }: IPostForm) => {
                             focus:border-blue-600 focus:bg-white focus:text-gray-700 focus:outline-none"
                   aria-label="Default select example"
                   onChange={handleChange}
-                  value={formState.type}>
+                  value={formState.material}>
                   <option value="0">Selecione uma opção</option>
                   <option value="vidro">Vidro</option>
                   <option value="plastico">Plástico</option>

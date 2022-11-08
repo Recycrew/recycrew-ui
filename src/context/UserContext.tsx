@@ -1,33 +1,49 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from 'react';
+import { apiService } from '../service/api';
 
-interface IUserContext {
-    userName: string,
-    setUserName: React.Dispatch<React.SetStateAction<string>>
+export interface User {
+  id: number;
+  name: string;
+  password: string;
+  email: string;
+  document_type: string;
+  document_number: string;
+  address: string;
+  is_collector: boolean;
 }
 
-const UserContext = createContext({} as IUserContext);
+interface IContextUser {
+  user: User | undefined;
+  setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+}
+
+const UserContext = createContext({} as IContextUser);
 
 const UserContextProvider: React.FC = ({ children }) => {
-    const [userName, setUserName] = useState('');
-    useEffect(() => {
-        const name = localStorage.getItem('name');
+  const [user, setUser] = useState<User>();
+  useEffect(() => {
+    (async () => {
+      const email = localStorage.getItem('email');
+      if (!email) return;
 
-        if (!name) return;
+      const user = await apiService.get('/user?email=' + email);
+      if (!user) return;
 
-        setUserName(name);
-    }, [userName])
-    return (
-        <UserContext.Provider value={{ userName, setUserName } as IUserContext}>
-            {children}
-        </UserContext.Provider>
-    );
-}
+      setUser(user);
+    })();
+  }, []);
+  return (
+    <UserContext.Provider value={{ setUser, user } as IContextUser}>
+      {children}
+    </UserContext.Provider>
+  );
+};
 
 export const useUserContext = () => {
-    const context = useContext(UserContext);
-    return context;
-}
+  const context = useContext(UserContext);
+  return context;
+};
 
 export default UserContextProvider;

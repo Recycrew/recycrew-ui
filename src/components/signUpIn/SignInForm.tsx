@@ -8,20 +8,23 @@ import { apiService } from '../../service/api';
 const SignInForm: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { setUserName } = useUserContext();
+  const { setUser } = useUserContext();
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      const [user] = await apiService.get(`/contas?login=${email}&password=${password}`)
+      const user = await apiService.post(`/login`, {
+        email,
+        password
+      });
 
-      setUserName(user.name);
-      localStorage.setItem('name', user.name)
-      navigate('/coletas');
+      setUser(user);
+      localStorage.setItem('email', user.email);
+      navigate('/doacoes');
     } catch (error) {
       alert('Seu email ou senha estão incorretos');
     }
-  }
+  };
 
   return (
     <div className="flex-1 flex-col justify-center py-16 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -47,7 +50,10 @@ const SignInForm: FC = () => {
             onChange={setPassword}
           />
           <div className="flex flex-col gap-4">
-            <Button title="Entrar" type="primary" onClick={handleLogin}></Button>
+            <Button
+              title="Entrar"
+              type="primary"
+              onClick={handleLogin}></Button>
           </div>
         </div>
       </div>

@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PostForm } from '../components';
+import DonationCard, { Donation } from '../components/DonationCard';
 import { useUserContext } from '../context/UserContext';
+import usePromise from '../hooks/promise';
 import { apiService } from '../service/api';
 export interface ICollects {
   id: number;
@@ -13,79 +15,101 @@ export interface ICollects {
   colector?: string;
 }
 
+export interface Collector {
+  id: number;
+  name: string;
+  password: string;
+  email: string;
+  document_type: string;
+  document_number: string;
+  address: string;
+  is_collector: boolean;
+}
+
 const Wall = () => {
+  const [donations, setDonations] = usePromise<Donation[]>(
+    () => apiService.get('/donation'),
+    []
+  );
+
+  const [collects] = usePromise<{ donation: Donation; collector: Collector }[]>(
+    () => apiService.get('/collection'),
+    []
+  );
+
+  const donationsWithoutCollects = useMemo(() => {
+    const collectsDonationsIds = collects?.map(
+      (collect) => collect.donation.id
+    );
+    return donations?.filter(
+      (donation) => !collectsDonationsIds?.includes(donation.id)
+    );
+  }, [donations, collects]);
+
   document.body.style.background = '#f3f4f6';
-  const [collects, setCollects] = useState<ICollects[]>([]);
-  const { userName } = useUserContext();
+  const { user } = useUserContext();
   const navigate = useNavigate();
 
-  const handleClick = async (collect: ICollects) => {
-    if (collect.responsible === userName) return;
+  const handleCollect = async (id: number) => {
+    if (!user || !user?.is_collector) return;
 
-    const updatedCollect = await apiService.put(`/coletas/${collect.id}`, { ...collect, colector: userName });
+    try {
+      await apiService.post('/collection/create', {
+        donationId: id,
+        collectorId: user?.id
+      });
+    } catch (error) {
+      console.error('Não foi possível criar essa coleta!');
+    } finally {
+      setDonations((previousCollection) =>
+        previousCollection?.filter(
+          (currentDonation) => currentDonation.id !== id
+        )
+      );
+    }
+  };
 
-    setCollects((previousCollection) =>
-      previousCollection.map((currentCollect) =>
-        currentCollect.id === collect.id ? updatedCollect : currentCollect
+  const handleDeleteDonation = async (donation: Donation) => {
+    await apiService.delete(`/donation/delete/${donation.id}`);
+
+    setDonations((previousCollection) =>
+      previousCollection?.filter(
+        (currentDonation) => currentDonation.id !== donation.id
       )
     );
   };
 
-  const handleExitCollectOrder = async (collect: ICollects) => {
-    await apiService.delete(`/coletas/${collect.id}`);
+  const createDonation = async (material: string, description: string) => {
+    const donation = await apiService.post('/donation/create', {
+      donorId: user?.id,
+      material: material.toUpperCase(),
+      description
+    });
 
-    setCollects((previousCollection) =>
-      previousCollection.filter((currentCollect) =>
-        currentCollect.id !== collect.id
-      )
-    );
-  }
+    console.log(donation);
 
-  useEffect(() => {
-    (async () => {
-      const coletas = await apiService.get('/coletas');
-      console.log(coletas);
-      setCollects(coletas);
-    })();
-  }, []);
+    setDonations((donations) => {
+      if (!Array.isArray(donations)) return;
+      return [...donations, { ...donation, donor: { name: user?.name } }];
+    });
+  };
 
   useEffect(() => {
-    if (userName) return;
+    if (user?.name) return;
 
     navigate('/');
-  }, [userName]);
+  }, [user?.name]);
 
   return (
     <div className="my-8">
-      <PostForm setCollection={setCollects} />
-      {collects.map((collect) => (
-        <div
-          key={collect.id}
-          className="mx-auto mb-10 max-w-full bg-white px-4 py-6 shadow sm:max-w-xl sm:rounded-lg sm:p-6"
-          onClick={() => handleClick(collect)}
-          style={
-            collect.colector
-              ? { backgroundColor: '#73ba91', color: 'white', position: 'relative'}
-              : {position: 'relative'}
-          }>
-          {collect.responsible === userName && <span style={{ position: 'absolute', top: 5, right: 10, color: collect.colector ? 'white': 'black', cursor: 'pointer'}} onClick={() => handleExitCollectOrder(collect)}>X</span>}
-          <div className="flex items-start space-x-4">
-            <div className="min-w-0 flex-1">
-              <div>Descrição: {collect.description}</div>
-              <div>
-                Tipo:{' '}
-                {collect.type.slice(0, 1).toUpperCase() + collect.type.slice(1)}
-              </div>
-              <div>Solicitante: {collect.responsible}</div>
-              <div>
-                Coletor:{' '}
-                {collect.colector
-                  ? collect.colector
-                  : 'Ainda não foi selecionado por um coletor'}
-              </div>
-            </div>
-          </div>
-        </div>
+      <PostForm onCreateDonation={createDonation} />
+      {donationsWithoutCollects?.map((donation: Donation) => (
+        <DonationCard
+          key={String(donation.id)}
+          donation={donation}
+          onDelete={handleDeleteDonation}
+          onPickCollect={handleCollect}
+        />
       ))}
     </div>
   );

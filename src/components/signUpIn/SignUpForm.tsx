@@ -10,16 +10,39 @@ const SignUpForm: FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [address, setAddress] = useState('');
+  const [isCollector, setIsCollector] = useState(false);
+  const [documentNumber, setDocumentNumber] = useState('');
+  const [documentType, setDocumentType] = useState<'CPF' | 'CNPJ'>('CPF');
 
-  const { setUserName } = useUserContext();
+  const { setUser } = useUserContext();
 
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    const user = await apiService.post('/contas', { login: email, password, name });
+    if (
+      !email ||
+      !name ||
+      !password ||
+      !address ||
+      !documentNumber ||
+      !documentType
+    )
+      return;
 
-    setUserName(user.name);
-    navigate('/coletas');
+    const user = await apiService.post('/register', {
+      email,
+      name,
+      password,
+      address,
+      document_number: documentNumber,
+      document_type: documentType,
+      is_collector: isCollector
+    });
+
+    setUser(user);
+    localStorage.setItem('email', user.email);
+    navigate('/doacoes');
   };
 
   return (
@@ -46,6 +69,39 @@ const SignUpForm: FC = () => {
             value={password}
             onChange={setPassword}
           />
+          <Input
+            label="Endereço"
+            type="text"
+            value={address}
+            onChange={setAddress}
+          />
+          <div>
+            <select
+              id="countries"
+              onChange={(event) =>
+                setDocumentType(event.currentTarget.value as 'CPF' | 'CNPJ')
+              }
+              defaultValue={documentType}
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500">
+              <option value="CPF">CPF</option>
+              <option value="CNPJ">CNPJ</option>
+            </select>
+            <Input
+              label="Nº documento"
+              type="text"
+              value={documentNumber}
+              onChange={setDocumentNumber}
+            />
+          </div>
+          <div className="flex flex-row items-center gap-2">
+            <input
+              type="checkbox"
+              className="leading-[0]"
+              onClick={() => setIsCollector((isCollector) => !isCollector)}
+              defaultChecked={isCollector}
+            />
+            <span className="leading-[0]"> É coletor?</span>
+          </div>
           <div className="flex flex-col gap-4">
             <Button
               title="Cadastrar"
